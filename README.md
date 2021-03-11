@@ -2,7 +2,6 @@
 ntuaHydraulics is an application you can use to calculate the **flow depth** and **supply** of a pipeline with given characteristics.
 
 ### Installation
-<hr/>
 
 ### Creators
 * Aggelos Galatis 
