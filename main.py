@@ -190,7 +190,7 @@ class MainApp(QWidget):
             type_validation = True if supply_num is not None and supply_num > 0 else Helpers.validation_error(
                 "Μη αποδεκτή τιμή παροχής.")
 
-        self.validate_geometry() if type_validation else print("Cannot continue to geometry validation")
+        return self.validate_geometry() if type_validation else False
 
     def validate_geometry(self):
         geometry_validation = False
@@ -213,12 +213,19 @@ class MainApp(QWidget):
                     Helpers.validation_error("Μη αποδεκτή τιμή στη γεωμετρία τραπεζίου.")
             else:
                 Helpers.validation_error("Μη αποδεκτή τιμή στη γεωμετρία τραπεζίου.")
-        if geometry_validation is True:
-            self.static_fields_validation()
+        return self.static_fields_validation() if geometry_validation else False
 
     def static_fields_validation(self):
-        # todo: Need to validate the static fiels..
-        print("I need to validate static fiedls..")
+        manning_num = Helpers.parse_float_from_string(self.manning.text())
+        if manning_num is not None and manning_num > 0:
+            slope_num = Helpers.parse_float_from_string(self.slope.text())
+            if slope_num is not None and slope_num >= 0:
+                return True
+            else:
+                Helpers.validation_error("Μη αποδεκτή τιμή κλίσης αγωγού.")
+        else:
+            Helpers.validation_error("Μη αποδεκτή τιμή συντελεστή Manning.")
+        return False
 
 
 if __name__ == "__main__":
