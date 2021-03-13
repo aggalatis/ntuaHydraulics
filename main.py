@@ -1,5 +1,6 @@
 import sys
 from classes.Helpers import *
+from classes.PipeRec import PipeRec
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -122,9 +123,9 @@ class MainApp(QWidget):
         grid.addWidget(self.slope, 3, 1, 1, 1)
         grid.addWidget(self.slope_label, 3, 0, 1, 1)
         generate_data_cells.clicked.connect(self.show_potential_widgets)
-        save_button.clicked.connect(self.validate_and_proceed)
-        read_button.clicked.connect(self.validate_and_proceed)
-        execute_button.clicked.connect(self.validate_and_proceed)
+        save_button.clicked.connect(self.save_data_to_file)
+        # read_button.clicked.connect(self.create_pipeline)
+        # execute_button.clicked.connect(self.create_pipeline)
 
         self.hide_widget(self.supply, self.supply_label)
         self.hide_widget(self.depth, self.depth_label)
@@ -227,6 +228,10 @@ class MainApp(QWidget):
             Helpers.validation_error("Μη αποδεκτή τιμή συντελεστή Manning.")
         return False
 
+    def save_data_to_file(self):
+        if self.validate_and_proceed():
+            rec_pipe = PipeRec(Helpers.parse_float_from_string(self.width.text()))
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
@@ -235,5 +240,5 @@ if __name__ == "__main__":
         window.resize(600, 300)
         sys.exit(app.exec())
     except:
-        e = sys.exc_info()[0]
+        e = sys.exc_info()
         print(str(e))
