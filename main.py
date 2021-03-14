@@ -263,6 +263,8 @@ class MainApp(QWidget):
                     self.pipe_schema.setCurrentText(line_attr[1])
                 elif line_attr[0] == "pipe_width":
                     self.width.setText(line_attr[1])
+                elif line_attr[0] == "pipe_diameter":
+                    self.diameter.setText(line_attr[1])
                 elif line_attr[0] == "pipe_depth":
                     self.depth.setText(line_attr[1])
                 elif line_attr[0] == "pipe_supply":
@@ -275,10 +277,10 @@ class MainApp(QWidget):
                     self.angle_left.setText(line_attr[1])
                 else:
                     self.angle_right.setText(line_attr[1])
+            Helpers.success_message("Επιτυχής ανάκτηση δεδομένων από αρχείο.")
         except:
             ex = sys.exc_info()
             print(str(ex))
-
         data_file.close()
 
 
