@@ -252,7 +252,10 @@ class MainApp(QWidget):
 
     def read_data_from_file(self):
         file_read = QFileDialog.getOpenFileName(None, "Επιλογή αρχείου δεδομένων.", "", "Data Files (*.dat)")
-        data_file = open(str(file_read[0]), "r")
+        if file_read[0] != "":
+            data_file = open(str(file_read[0]), "r")
+        else:
+            return
 
         try:
             for line in data_file:
