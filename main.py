@@ -251,7 +251,7 @@ class MainApp(QWidget):
                 circle_pipe.save_to_file()
 
     def read_data_from_file(self):
-        file_read = QFileDialog.getOpenFileName(None, "Επιλογή αρχείου δεδομένων.", "", "Data Files (*.dat)")
+        file_read = QFileDialog.getOpenFileName(None, "Επιλογή αρχείου δεδομένων.", "", "Hyd Files (*.hyd)")
         if file_read[0] != "":
             data_file = open(str(file_read[0]), "r")
         else:

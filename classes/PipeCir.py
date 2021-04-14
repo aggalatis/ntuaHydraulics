@@ -13,7 +13,7 @@ class PipeCir:
         self.pipe_slope = pipe_slope
 
     def save_to_file(self):
-        file_name = QFileDialog.getSaveFileName(None, "Επιλογή σημείου αποθήκευσης", "", "Data Files (*.dat)")
+        file_name = QFileDialog.getSaveFileName(None, "Επιλογή σημείου αποθήκευσης", "", "Hyd Files (*.hyd)")
         try:
             file_str = "pipe_calculation_type: " + self.pipe_calculation_type + "\n"
             file_str += "pipe_type: " + "Κυκλική" + "\n"
