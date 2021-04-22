@@ -1,4 +1,5 @@
 import sys
+import math
 from classes.Helpers import *
 from PyQt5.QtWidgets import *
 
@@ -11,6 +12,7 @@ class PipeRec:
         self.pipe_manning = pipe_manning
         self.pipe_slope = pipe_slope
         self.pipe_calculation_type = pipe_calculation_type
+        self.pipe_velocity = 0
 
     def save_to_file(self):
         file_name = QFileDialog.getSaveFileName(None, "Επιλογή σημείου αποθήκευσης", "", "Hyd Files (*.hyd)")
@@ -29,3 +31,27 @@ class PipeRec:
         except:
             e = sys.exc_info()
             print(str(e))
+
+    def calc_supply(self):
+        area = self.pipe_depth * self.pipe_width
+        perimeter = 2 * self.pipe_depth + self.pipe_width
+        rh = area / perimeter
+        speed = (1 / self.pipe_manning) * rh ** (2/3) * math.sqrt(self.pipe_slope)
+        supply = speed * area
+        self.pipe_supply = supply
+        self.pipe_velocity = speed
+        Helpers.result_message(self.pipe_supply, self.pipe_depth, self.pipe_velocity)
+
+    def calc_depth(self):
+        st_param = self.pipe_supply * self.pipe_manning / (math.sqrt(self.pipe_slope)) * self.pipe_width
+        my_result = 0
+        pipe_height = 0.00
+        while round(my_result, 2) != round(st_param, 2):
+            pipe_height += 0.0001
+            area = pipe_height * self.pipe_width
+            perimeter = 2 * pipe_height + self.pipe_width
+            rh = area / perimeter
+            my_result = rh ** (2/3) * pipe_height
+        self.pipe_depth = pipe_height
+        self.pipe_velocity = (1 / self.pipe_manning) * rh ** (2/3) * math.sqrt(self.pipe_slope)
+        Helpers.result_message(self.pipe_supply, self.pipe_depth, self.pipe_velocity)

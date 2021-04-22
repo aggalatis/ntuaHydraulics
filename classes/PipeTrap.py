@@ -1,4 +1,5 @@
 import sys
+import math
 from classes.Helpers import *
 from PyQt5.QtWidgets import *
 
@@ -13,6 +14,7 @@ class PipeTrap:
         self.pipe_slope = pipe_slope
         self.pipe_angle_left = pipe_angle_left
         self.pipe_angle_right = pipe_angle_right
+        self.pipe_velocity = None
 
     def save_to_file(self):
         file_name = QFileDialog.getSaveFileName(None, "Επιλογή σημείου αποθήκευσης", "", "Hyd Files (*.hyd)")
@@ -33,3 +35,33 @@ class PipeTrap:
         except:
             e = sys.exc_info()
             print(str(e))
+
+    def calc_supply(self):
+        rad_a = math.radians(self.pipe_angle_left)
+        rad_b = math.radians(self.pipe_angle_right)
+        big_base = self.pipe_width + self.pipe_depth * (math.tan(rad_a) + math.tan(rad_b))
+        area = (self.pipe_width + big_base) * self.pipe_depth / 2
+        perimeter = self.pipe_width + self.pipe_depth * (1 / math.cos(rad_a) + 1 / math.cos(rad_b))
+        rh = area / perimeter
+        velocity = (1 / self.pipe_manning) * rh ** (2 / 3) * math.sqrt(self.pipe_slope)
+        supply = area * velocity
+        self.pipe_supply = supply
+        self.pipe_velocity = velocity
+        Helpers.result_message(self.pipe_supply, self.pipe_depth, self.pipe_velocity)
+
+    def calc_depth(self):
+        st_param = (self.pipe_supply * self.pipe_manning / math.sqrt(self.pipe_slope)) ** 3
+        rad_a = math.radians(self.pipe_angle_left)
+        rad_b = math.radians(self.pipe_angle_right)
+        my_result = 0
+        pipe_height = 0.00
+        while round(my_result, 3) != round(st_param, 3):
+            pipe_height += 0.000001
+            big_base = self.pipe_width + pipe_height * (math.tan(rad_a) + math.tan(rad_b))
+            numerator = ((self.pipe_width + big_base) * pipe_height / 2) ** 5
+            denominator = (self.pipe_width + pipe_height * (1 / math.cos(rad_a) + 1 / math.cos(rad_b))) ** 2
+            my_result = numerator / denominator
+        self.pipe_depth = pipe_height
+        area = (self.pipe_width + big_base) * self.pipe_depth / 2
+        self.pipe_velocity = self.pipe_supply / area
+        Helpers.result_message(self.pipe_supply, self.pipe_depth, self.pipe_velocity)

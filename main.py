@@ -71,7 +71,7 @@ class MainApp(QWidget):
 
         self.supply = QLineEdit()
         self.supply.setValidator(self.onlyDouble)
-        self.supply_label = QLabel("Παροχή (m3/s):")
+        self.supply_label = QLabel("Παροχή (m³/s):")
         self.supply_label.setFont(Helpers.get_bold_font())
         grid.addWidget(self.supply_label, 0, 2, 1, 1)
         grid.addWidget(self.supply, 0, 3, 1, 1)
@@ -120,13 +120,13 @@ class MainApp(QWidget):
 
         self.slope = QLineEdit()
         self.slope.setValidator(self.onlyDouble)
-        self.slope_label = QLabel("Κλίση αγωγού (°):")
+        self.slope_label = QLabel("Κλίση αγωγού:")
         self.slope_label.setFont(Helpers.get_bold_font())
         grid.addWidget(self.slope, 3, 1, 1, 1)
         grid.addWidget(self.slope_label, 3, 0, 1, 1)
         save_button.clicked.connect(self.save_data_to_file)
         read_button.clicked.connect(self.read_data_from_file)
-        # execute_button.clicked.connect(self.create_pipeline)
+        execute_button.clicked.connect(self.create_pipeline)
 
         self.hide_widget(self.depth, self.depth_label)
         self.hide_widget(self.angle_left, self.angle_left_label)
@@ -208,7 +208,7 @@ class MainApp(QWidget):
             angle_right_num = Helpers.parse_float_from_string(self.angle_right.text())
             angle_left_num = Helpers.parse_float_from_string(self.angle_left.text())
             if width_num is not None and angle_right_num is not None and angle_left_num is not None:
-                if width_num > 0 and 0 < angle_left_num < 180 and angle_right_num > 0 and angle_right_num < 180:
+                if width_num > 0 and 0 < angle_left_num < 90 and angle_right_num > 0 and angle_right_num < 90:
                     geometry_validation = True
                 else:
                     Helpers.validation_error("Μη αποδεκτή τιμή στη γεωμετρία τραπεζίου.")
@@ -220,7 +220,7 @@ class MainApp(QWidget):
         manning_num = Helpers.parse_float_from_string(self.manning.text())
         if manning_num is not None and manning_num > 0:
             slope_num = Helpers.parse_float_from_string(self.slope.text())
-            if slope_num is not None and slope_num >= 0:
+            if slope_num is not None and slope_num > 0:
                 return True
             else:
                 Helpers.validation_error("Μη αποδεκτή τιμή κλίσης αγωγού.")
@@ -285,6 +285,39 @@ class MainApp(QWidget):
             ex = sys.exc_info()
             print(str(ex))
         data_file.close()
+
+    def create_pipeline(self):
+        if self.validate_and_proceed():
+            pipe_manning = Helpers.parse_float_from_string(self.manning.text())
+            pipe_slope = Helpers.parse_float_from_string(self.slope.text())
+            pipe_supply = Helpers.parse_float_from_string(self.supply.text())
+            pipe_depth = Helpers.parse_float_from_string(self.depth.text())
+            pipe_calculation_type = self.calculation_type.currentText()
+            if self.pipe_schema.currentText() == "Ορθογωνική":
+                pipe_width = Helpers.parse_float_from_string(self.width.text())
+                rec_pipe = PipeRec(pipe_calculation_type, pipe_width, pipe_supply, pipe_depth, pipe_manning, pipe_slope)
+                if pipe_calculation_type == "Βάθος ροής":
+                    rec_pipe.calc_supply()
+                else:
+                    rec_pipe.calc_depth()
+            elif self.pipe_schema.currentText() == "Τραπεζοειδής":
+                pipe_width = Helpers.parse_float_from_string(self.width.text())
+                pipe_angle_right = Helpers.parse_float_from_string(self.angle_right.text())
+                pipe_angle_left = Helpers.parse_float_from_string(self.angle_left.text())
+                trap_pipe = PipeTrap(pipe_calculation_type, pipe_width, pipe_supply, pipe_depth, pipe_manning,
+                                     pipe_slope, pipe_angle_left, pipe_angle_right)
+                if pipe_calculation_type == "Βάθος ροής":
+                    trap_pipe.calc_supply()
+                else:
+                    trap_pipe.calc_depth()
+            else:
+                pipe_diameter = Helpers.parse_float_from_string(self.diameter.text())
+                circle_pipe = PipeCir(pipe_calculation_type, pipe_diameter, pipe_supply, pipe_depth, pipe_manning,
+                                      pipe_slope)
+                if pipe_calculation_type == "Βάθος ροής":
+                    circle_pipe.calc_supply()
+                else:
+                    circle_pipe.calc_depth()
 
 
 if __name__ == "__main__":
