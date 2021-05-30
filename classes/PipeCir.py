@@ -1,6 +1,7 @@
 import sys
 import math
 from classes.Helpers import *
+from classes.Circle import *
 from PyQt5.QtWidgets import *
 
 
@@ -49,14 +50,14 @@ class PipeCir:
         pipe_supply = pipe_velocity * wet_area
         self.pipe_supply = pipe_supply
         self.pipe_velocity = pipe_velocity
-        Helpers.result_message(self.pipe_supply, self.pipe_depth, self.pipe_velocity)
+        Circle(self.pipe_supply, self.pipe_depth, self.pipe_velocity, self.pipe_diameter)
 
     def calc_depth(self):
         st_param = (self.pipe_supply * self.pipe_manning / math.sqrt(self.pipe_slope)) ** 3 * self.pipe_radius ** 2 / (self.pipe_diameter ** 2 / 8) ** 5
         my_result = 0
         my_angle = 0
         while round(my_result, 3) != round(st_param, 3):
-            my_angle += 0.00001
+            my_angle += 0.000001
             if round(my_angle) > math.pi * 2:
                 Helpers.validation_error("Αδυναμία επίλυσης, το βάθος ροής υπερβαίνει την διάμετρο του αγωγού.")
                 return
@@ -64,9 +65,8 @@ class PipeCir:
         wet_area = self.pipe_diameter ** 2 * (my_angle - math.sin(my_angle)) / 8
         pipe_velocity = self.pipe_supply / wet_area
         pipe_depth = self.pipe_radius * (1 - math.cos(my_angle / 2))
-
         self.pipe_depth = pipe_depth
         self.pipe_velocity = pipe_velocity
-        Helpers.result_message(self.pipe_supply, self.pipe_depth, self.pipe_velocity)
+        Circle(self.pipe_supply, self.pipe_depth, self.pipe_velocity, self.pipe_diameter)
 
 

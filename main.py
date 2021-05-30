@@ -4,7 +4,6 @@ from classes.PipeRec import PipeRec
 from classes.PipeTrap import PipeTrap
 from classes.PipeCir import PipeCir
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
 
@@ -208,7 +207,7 @@ class MainApp(QWidget):
             angle_right_num = Helpers.parse_float_from_string(self.angle_right.text())
             angle_left_num = Helpers.parse_float_from_string(self.angle_left.text())
             if width_num is not None and angle_right_num is not None and angle_left_num is not None:
-                if width_num > 0 and 0 < angle_left_num < 90 and angle_right_num > 0 and angle_right_num < 90:
+                if width_num > 0 and 0 < angle_left_num <= 90 and angle_right_num > 0 and angle_right_num <= 90:
                     geometry_validation = True
                 else:
                     Helpers.validation_error("Μη αποδεκτή τιμή στη γεωμετρία τραπεζίου.")

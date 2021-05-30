@@ -1,6 +1,7 @@
 import sys
 import math
 from classes.Helpers import *
+from classes.Trapezoid import *
 from PyQt5.QtWidgets import *
 
 
@@ -47,7 +48,7 @@ class PipeTrap:
         supply = area * velocity
         self.pipe_supply = supply
         self.pipe_velocity = velocity
-        Helpers.result_message(self.pipe_supply, self.pipe_depth, self.pipe_velocity)
+        Trapezoid(self.pipe_supply, self.pipe_depth, self.pipe_velocity, self.pipe_angle_left, self.pipe_angle_right, self.pipe_width)
 
     def calc_depth(self):
         st_param = (self.pipe_supply * self.pipe_manning / math.sqrt(self.pipe_slope)) ** 3
@@ -64,4 +65,4 @@ class PipeTrap:
         self.pipe_depth = pipe_height
         area = (self.pipe_width + big_base) * self.pipe_depth / 2
         self.pipe_velocity = self.pipe_supply / area
-        Helpers.result_message(self.pipe_supply, self.pipe_depth, self.pipe_velocity)
+        Trapezoid(self.pipe_supply, self.pipe_depth, self.pipe_velocity, self.pipe_angle_left, self.pipe_angle_right, self.pipe_width)
